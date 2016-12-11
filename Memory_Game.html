@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Memory Game</title>
+    <style type="text/css">
+      #memory_board{
+        background-color:grey;
+        border: 1px solid black;
+        width: 800px;
+        height: 550px;
+        padding: 24px;
+        margin: 50px auto;
+        padding-bottom: auto;
+      }
+      div#memory_board > div{
+      	background: url(card_tile.jpg) no-repeat;
+        background-position: center;
+      	border:#000 1px solid;
+      	width:71px;
+      	height:71px;
+      	float:left;
+      	margin:10px;
+      	padding:20px;
+      	font-size:64px;
+      	cursor:pointer;
+      	text-align:center;
+
+      }
+      #button {
+          background-color: #4CAF50;
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          cursor: pointer;
+          margin: auto;
+          display: block;
+      }
+#shuffle{margin: 0px auto;}
+    </style>
+    <script type="text/javascript">
+    var memory_array = ['A','A','B','B','C','C','D','D','E','E','F','F','G','G','H','H','I','I','J','J','K','K','L','L'];
+    var memory_values = [];
+    var memory_tile_ids = [];
+    var tiles_flipped = 0;
+      //To shuffle cards...
+      function shuffle(memory_array){
+        var j,x,i;
+        for (i=0;i<memory_array.length;i++){
+          j = Math.floor(Math.random()*24);
+          x = memory_array[i];
+          memory_array[i] = memory_array[j];
+          memory_array[j] = x;
+        }
+      }
+      //A new board creation for the cards.
+      function new_board(){
+        tiles_flipped = 0;
+        var output = ' ';
+        shuffle(memory_array);
+      //  shuffle(memory_array);
+        for (var i = 0; i < memory_array.length; i++) {
+          output += '<div id="tile_'+i+'" onclick="memoryFlipTile(this,\''+memory_array[i]+'\')"></div>';
+        }
+        document.getElementById('memory_board').innerHTML = output;
+      }
+      // Flipping the cards to open the letters behind them and hold the two selections while the third IF
+      //make the comparison to check if there is a match...
+      function memoryFlipTile(tile,val){
+        if (tile.innerHTML == "" && memory_values.length < 2) {
+           tile.style.background = "white";
+           tile.innerHTML = val;
+           if(memory_values.length == 0){
+             memory_values.push(val);
+             memory_tile_ids.push(tile.id);}
+              else if (memory_values.length == 1) {
+               memory_values.push(val);
+               memory_tile_ids.push(tile.id);
+               if (memory_values[0] == memory_values[1]) {
+                   tiles_flipped += 2;
+                   memory_values = [];
+                   memory_tile_ids = [];
+                   //To check if the all board is cleared out...
+                   if (tiles_flipped == memory_array.length) {
+                     alert("Congrats! You cleared all board!")
+                     new_board();
+                   }
+                  }else {
+                    //Function to flip the cards back after non-match situation...
+                      function flip2Back(){
+                           var tile_1 = document.getElementById(memory_tile_ids[0]);
+                           var tile_2 = document.getElementById(memory_tile_ids[1]);
+                           tile_1.style.background = "url(card_tile.jpg) no-repeat";
+                           tile_2.style.background = "url(card_tile.jpg) no-repeat";
+                           tile_2.innerHTML = "";
+                           tile_1.innerHTML = "";
+                           memory_values = [];
+                           memory_tile_ids = [];
+                         }
+                   setTimeout(flip2Back,700);
+               }
+             }
+
+
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="memory_board">
+
+    </div>
+      <button type="button" id ='button' name="button" onclick="new_board()">RESTART</button>
+    <script type="text/javascript">
+      new_board();
+    </script>
+  </body>
+</html>
